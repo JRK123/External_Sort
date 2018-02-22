@@ -7,7 +7,7 @@
 using namespace std;
 
 
-ifstream * open_files(int runs) {
+ifstream *open_files(int runs) {
 	
 	ifstream *obj;
 	obj = new ifstream[runs];
@@ -17,7 +17,13 @@ ifstream * open_files(int runs) {
 		k = to_string(i);
 		obj[i - 1].open("/Run/file" + k);
 	}
+/*	for (int it = 0; it < 100; it++) {
+		obj[3] >> i;
+		cout << i << endl;
+	}*/
 	return obj;
+	
+	
 }
 
 
@@ -49,11 +55,13 @@ int main(int argc, char *argv[]) {
 		}
 		input.close();
 
-	ifstream *obj1 = open_files(run);
-	int l, m;
-	obj1[1] >> l; obj1[2] >> m;
-	cout << l << "\t" << m << endl;
-		
+	//	ifstream obj1 = open_files(run);
+		ifstream *obj1 = open_files(run);
+		int l = 0, m = 0;
+		for (int it = 0; it < 100; it++) {
+			obj1[3] >> l;
+//			cout << l << endl;
+		}
 	}	
 	return 0;
 }
