@@ -1,29 +1,34 @@
 #include <iostream>
+#include <climits>
 #include <cstdio>
 #include <fstream>
-#include <string>
+#include <string.h>
 #include <algorithm>
+#include <vector>
 
 using namespace std;
 
 
-ifstream *open_files(int runs) {
-	
+ifstream * open_files_all(int runs) {
 	ifstream *obj;
 	obj = new ifstream[runs];
 	int i;
 	string k;
-	for (i = 1; i <= runs; i++) {
-		k = to_string(i);
-		obj[i - 1].open("/Run/file" + k);
+	for (i = 0; i < runs; i++) {
+		k = to_string(i+1);
+		obj[i].open("./Run/file" + k);
 	}
-/*	for (int it = 0; it < 100; it++) {
-		obj[3] >> i;
-		cout << i << endl;
-	}*/
+
 	return obj;
-	
-	
+}
+
+int find_min(vector <int> &vec) {
+	int min = 0, i;
+	for (i = 1; i < vec.size(); i++) {
+		if (vec[min] > vec[i])
+			min = i;
+	}
+	return min;
 }
 
 
@@ -35,11 +40,11 @@ int main(int argc, char *argv[]) {
 	ifstream input;
 	ofstream output;
 	int  i, j = 0, run = 0;
-	vector <int> arr;
 	input.open(argv[1]);
 	if (input.is_open()) {
-		while (input >> i) {
+		while (!input.eof()) {
 			
+			vector <int> arr;
 			for (j = 0; j < 100 && (input >> i) ; j++) {
 			//	cout << i << "\t";
 				arr.push_back(i);
@@ -55,14 +60,37 @@ int main(int argc, char *argv[]) {
 		}
 		input.close();
 
-	//	ifstream obj1 = open_files(run);
-		ifstream *obj1 = open_files(run);
-		int l = 0, m = 0;
-		for (int it = 0; it < 100; it++) {
-			obj1[3] >> l;
-//			cout << l << endl;
+	}
+		ifstream *obj;
+
+		obj = open_files_all(run);
+/*		obj = new ifstream[2];
+		obj[0].open("./Run/file1");
+		obj[1].open("./Run/file2");*/
+		vector <int> vec;
+		for (i = 0; i < run; i++) {
+			obj[i] >> j;
+			vec.push_back(j);
 		}
-	}	
+		int index, size = run;
+		output.open("sorted_file");
+		while (1) {
+			index = find_min(vec);
+			output << vec[index] << endl;
+			if (!obj[index].eof()) {
+				obj[index] >> j;
+				vec[index] = j;
+
+			}
+			else {
+				vec[index] = INT_MAX;
+				obj[index].close();
+				if (all_of(vec.begin(), vec.end(), [](int i) {return (i == INT_MAX);}))
+					break;
+			}
+		}
+		delete [] obj;
+		output.close();				
 	return 0;
 }
 
