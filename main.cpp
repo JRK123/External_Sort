@@ -23,12 +23,14 @@ ifstream * open_files_all(int runs) {
 }
 
 int find_min(vector <int> &vec) {
-	int min = 0, i;
+	int min = vec[0], i, index = 0;
 	for (i = 1; i < vec.size(); i++) {
-		if (vec[min] > vec[i])
-			min = i;
+		if (vec[i] < min){
+			min = vec[i];
+			index = i;
+		}
 	}
-	return min;
+	return index;
 }
 
 
@@ -45,10 +47,12 @@ int main(int argc, char *argv[]) {
 		while (!input.eof()) {
 			
 			vector <int> arr;
-			for (j = 0; j < 100 && (input >> i) ; j++) {
+			for (j = 0; (j < 100) && (input >> i) ; j++) {
 			//	cout << i << "\t";
 				arr.push_back(i);
 			}
+			if (input.eof())
+				break;
 			run++;
 			string str = to_string(run);
 			arr_sort(arr);
@@ -64,7 +68,8 @@ int main(int argc, char *argv[]) {
 		ifstream *obj;
 
 		obj = open_files_all(run);
-/*		obj = new ifstream[2];
+
+		/*		obj = new ifstream[2];
 		obj[0].open("./Run/file1");
 		obj[1].open("./Run/file2");*/
 		vector <int> vec;
@@ -76,7 +81,8 @@ int main(int argc, char *argv[]) {
 		output.open("sorted_file");
 		while (1) {
 			index = find_min(vec);
-			output << vec[index] << endl;
+			if (!obj[index].eof()) 
+				output << vec[index] << endl;
 			if (!obj[index].eof()) {
 				obj[index] >> j;
 				vec[index] = j;
@@ -84,7 +90,7 @@ int main(int argc, char *argv[]) {
 			}
 			else {
 				vec[index] = INT_MAX;
-				obj[index].close();
+				//obj[index].close();
 				if (all_of(vec.begin(), vec.end(), [](int i) {return (i == INT_MAX);}))
 					break;
 			}
